@@ -1,0 +1,13 @@
+name = "discord-proleto"
+main = "src/index.ts"
+compatibility_date = "2023-05-29"
+
+[vars]
+WORSHIP_CHANNEL_ID = "702953546106273855"
+
+# 0 0 21 * * * when daylight saving
+# 0 0 22 * * * when no daylight saving
+[triggers]
+crons = [
+    "0 22 * * *"
+]
