@@ -10,14 +10,14 @@ const random = (seed: number): number => {
     return x - Math.floor(x);
 }
 
-const worship = async (env: Env): Promise<void> => {
+const worship = async (env: Env): Promise<string> => {
     const d = new Date();
     let seed = parseInt(
       `${d.getFullYear()}${d.getMonth() + 1}${d.getDate()}`
     );
     let country = COUNTRIES[Math.floor(random(seed) * COUNTRIES.length)];
 
-    let res = await fetch(`https://discord.com/api/v10/channels/${env.WORSHIP_CHANNEL_ID}`, {
+    let req = await fetch(`https://discord.com/api/v10/channels/${env.WORSHIP_CHANNEL_ID}`, {
         method: 'PATCH',
         body: JSON.stringify({
             name: `${country.name}-worshipping`,
@@ -25,7 +25,10 @@ const worship = async (env: Env): Promise<void> => {
         })
     });
 
-    if (res.status !== 200) throw await res.text();
+    let res = await req.text()
+
+    if (req.status !== 200) throw res;
+    return res;
 }
 
 export default {
