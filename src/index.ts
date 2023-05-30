@@ -22,7 +22,11 @@ const worship = async (env: Env): Promise<string> => {
         body: JSON.stringify({
             name: `${country.name}-worshipping`,
             topic: `:flag_${country.alpha2Code.toLowerCase()}::flag_${country.alpha2Code.toLowerCase()}::flag_${country.alpha2Code.toLowerCase()}:`
-        })
+        }),
+        headers: {
+            Authorization: 'Bot ' + env.DISCORD_TOKEN,
+            'Content-Type': 'application/json'
+        }
     });
 
     let res = await req.text()
