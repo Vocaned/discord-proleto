@@ -72,7 +72,8 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
             body: JSON.stringify({
                 embeds: [{
                     title: `${differ.id}`,
-                    description: output.substring(0, 4090)
+                    description: output.substring(0, 4090),
+                    url: differ.fetch_url
                 }]
             }),
             headers: {
