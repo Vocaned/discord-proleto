@@ -66,18 +66,20 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
         output += '```\n';
     }
 
-    await fetch(differ.webhook, {
-        method: 'POST',
-        body: JSON.stringify({
-            embeds: [{
-                title: `${differ.id}`,
-                description: output.substring(0, 4090)
-            }]
-        }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    if (output) {
+        await fetch(differ.webhook, {
+            method: 'POST',
+            body: JSON.stringify({
+                embeds: [{
+                    title: `${differ.id}`,
+                    description: output.substring(0, 4090)
+                }]
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
 
     return content;
 }
