@@ -27,7 +27,8 @@ export default {
         if (differs) {
             for (let differ of differs) {
                 let oldcontent = await env.DIFFDATA.get(differ.id) ?? '';
-                await diff(differ, oldcontent);
+                let newcontent = await diff(differ, oldcontent);
+                await env.DIFFDATA.put(differ.id, newcontent);
             }
         }
 
