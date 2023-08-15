@@ -4,7 +4,8 @@ compatibility_date = "2023-05-29"
 workers_dev = false
 route = "voc.pet/proleto/*"
 kv_namespaces = [
-    { binding = "DATA", id = "5630505baf5b44c79b0853d0b15e6e86" }
+    { binding = "DATA", id = "5630505baf5b44c79b0853d0b15e6e86" },
+    { binding = "DIFFDATA", id = "886ec8a859864540a380593b0510d517" }
 ]
 
 [vars]
