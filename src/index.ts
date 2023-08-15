@@ -37,7 +37,7 @@ const worship = async (env: Env): Promise<string> => {
 
 export default {
     async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
-        return Response.json(await worship(env));
+        return Response.json(JSON.parse(await worship(env)));
     },
     async fetch(request: Request, env: Env, ctx: ExecutionContext) {
         const { pathname } = new URL(request.url);
