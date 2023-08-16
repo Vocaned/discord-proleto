@@ -28,7 +28,6 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
     }
 
     let added: string[] = [];
-    let modified: string[][] = [];
     let removed: string[] = [];
 
     let maxLength = Math.max(oldContent.length, newContent.length);
@@ -38,9 +37,8 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
 
         if (oldLine === newLine) continue;
 
-        if (newLine && !oldLine) added.push(newLine);
-        else if (!newLine && oldLine) removed.push(oldLine);
-        else modified.push([oldLine, newLine])
+        if (!oldContent.includes(newLine)) added.push(newLine);
+        else if (!newContent.includes(oldLine)) removed.push(oldLine);
     }
 
     let output = '';
@@ -48,13 +46,6 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
         output += '## Added\n```diff\n';
         for (let l of added) {
             output += `+ ${l}\n`;
-        }
-        output += '```\n';
-    }
-    if (modified.length > 0) {
-        output += '## Modified\n```diff\n';
-        for (let m of modified) {
-            output += `- ${m[0]}\n+ ${m[1]}\n`;
         }
         output += '```\n';
     }
@@ -67,12 +58,15 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
     }
 
     if (output) {
+        output = output.substring(0, 4090)
+        if (!output.endsWith('```')) output += '```';
+
         await fetch(differ.webhook, {
             method: 'POST',
             body: JSON.stringify({
                 embeds: [{
                     title: `${differ.id}`,
-                    description: output.substring(0, 4090),
+                    description: output,
                     url: differ.fetch_url
                 }]
             }),
