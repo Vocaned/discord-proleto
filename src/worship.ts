@@ -5,11 +5,12 @@ let random = (seed: number): number => {
     return x - Math.floor(x);
 }
 
-export let worship = async (channel: string, token: string): Promise<string> => {
-    let d = new Date();
+export let worship = async (date: string, channel: string, token: string): Promise<string> => {
+    // Remove leading zeroes to get YYYYMD for legacy purposes
     let seed = parseInt(
-      `${d.getFullYear()}${d.getMonth() + 1}${d.getDate()}`
+        date.split('-').map(component => parseInt(component).toString()).join('')
     );
+
     let country = COUNTRIES[Math.floor(random(seed) * COUNTRIES.length)];
 
     let req = await fetch(`https://discord.com/api/v10/channels/${channel}`, {

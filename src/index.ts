@@ -15,11 +15,11 @@ interface IDStub {
 export default {
     async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
         // Get the date in Helsinki as a string. sv-SE is used as locale for YYYY-MM-SS format.
-        let date = new Date().toLocaleString('sv-SE', {timeZone: 'Europe/Helsinki'});
+        let date = new Date().toLocaleString('sv-SE', {year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'Europe/Helsinki'});
         let lastDate = await env.DATA.get('last_worship');
 
-        if (!lastDate || date.split(' ')[0] !== lastDate.split(' ')[0]) {
-            await worship(env.WORSHIP_CHANNEL_ID, env.DISCORD_TOKEN);
+        if (!lastDate || date !== lastDate) {
+            await worship(date, env.WORSHIP_CHANNEL_ID, env.DISCORD_TOKEN);
             await env.DATA.put('last_worship', date);
         }
 
@@ -38,7 +38,8 @@ export default {
         let { pathname } = new URL(request.url);
 
         if (pathname === '/proleto/worship') {
-            return Response.json(JSON.parse(await worship(env.WORSHIP_CHANNEL_ID, env.DISCORD_TOKEN)));
+            let date = new Date().toLocaleString('sv-SE', {year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'Europe/Helsinki'});
+            return Response.json(JSON.parse(await worship(date, env.WORSHIP_CHANNEL_ID, env.DISCORD_TOKEN)));
         }
         if (pathname === '/proleto/differs' && request.method === 'GET') {
             return Response.json(await env.DATA.get<Differ[]>('differs', 'json'));
