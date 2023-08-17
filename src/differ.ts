@@ -47,7 +47,8 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
                 embeds: [{
                     title: `${differ.id}`,
                     description: '```diff\n' + output + '```',
-                    url: differ.fetch_url
+                    url: differ.fetch_url,
+                    timestamp: new Date().toISOString()
                 }]
             }),
             headers: {
