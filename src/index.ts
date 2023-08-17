@@ -73,6 +73,7 @@ export default {
             if (!body.id || !differs) return Response.json({error: 'Invalid differ ID'}, {status: 400});
             differs = differs.filter(e => e.id !== body.id);
             await env.DATA.put('differs', JSON.stringify(differs));
+            await env.DIFFDATA.delete(body.id);
             return Response.json({id: body.id});
         }
 
