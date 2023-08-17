@@ -28,7 +28,7 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
     }
 
     let added = newContent.filter(l => !oldContent.includes(l));
-    let removed = newContent.filter(l => !newContent.includes(l));
+    let removed = oldContent.filter(l => !newContent.includes(l));
 
     let output = '';
     for (let l of added) {
@@ -39,7 +39,7 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
     }
 
     if (output) {
-        output = output.substring(0, 4090)
+        output = output.substring(0, 4080);
 
         await fetch(differ.webhook, {
             method: 'POST',
