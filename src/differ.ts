@@ -8,7 +8,11 @@ export interface Differ {
     webhook: string
 }
 
-export let diff = async (differ: Differ, old: string): Promise<string> => {
+interface PasteOutput {
+    url: string
+}
+
+export let diff = async (differ: Differ, old: string, pasteapikey: string): Promise<string> => {
     let req = await fetch(differ.fetch_url, differ.fetch_opts);
     let content = await req.text();
 
@@ -30,6 +34,7 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
     let added = newContent.filter(l => !oldContent.includes(l));
     let removed = oldContent.filter(l => !newContent.includes(l));
 
+    // TODO: Order the lines correctly
     let output = '';
     for (let l of added) {
         output += `+ ${l}\n`;
@@ -39,6 +44,22 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
     }
 
     if (output) {
+        let pastereq = await fetch('https://api.voc.pet/paste', {
+            method: 'POST',
+            body: JSON.stringify({
+                "key": pasteapikey,
+                "content": output
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Use paste URL whenever possible, fallback to original URL being diffed
+        let url = differ.fetch_url;
+        let res = await pastereq.json<PasteOutput>();
+        if (res && res.url) url = res.url;
+
         output = output.substring(0, 4080);
 
         await fetch(differ.webhook, {
@@ -47,7 +68,7 @@ export let diff = async (differ: Differ, old: string): Promise<string> => {
                 embeds: [{
                     title: `${differ.id}`,
                     description: '```diff\n' + output + '```',
-                    url: differ.fetch_url,
+                    url: url,
                     timestamp: new Date().toISOString()
                 }]
             }),
