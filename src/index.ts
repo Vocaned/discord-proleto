@@ -4,6 +4,8 @@ import { Differ, diff } from './differ';
 interface Env {
     DISCORD_TOKEN: string;
     WORSHIP_CHANNEL_ID: string;
+    PASTE_API_KEY: string;
+    PASTE_API_URL: string;
     DATA: KVNamespace;
     DIFFDATA: KVNamespace;
 }
@@ -27,7 +29,7 @@ export default {
         if (differs) {
             for (let differ of differs) {
                 let oldcontent = await env.DIFFDATA.get(differ.id) ?? '';
-                let newcontent = await diff(differ, oldcontent);
+                let newcontent = await diff(differ, oldcontent, env.PASTE_API_KEY);
                 await env.DIFFDATA.put(differ.id, newcontent);
             }
         }
@@ -49,7 +51,7 @@ export default {
             if (differs) {
                 for (let differ of differs) {
                     let oldcontent = await env.DIFFDATA.get(differ.id) ?? '';
-                    let newcontent = await diff(differ, oldcontent);
+                    let newcontent = await diff(differ, oldcontent, env.PASTE_API_KEY);
                     await env.DIFFDATA.put(differ.id, newcontent);
                 }
             }
