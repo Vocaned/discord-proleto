@@ -10,7 +10,7 @@ kv_namespaces = [
 
 [vars]
 WORSHIP_CHANNEL_ID = "702953546106273855"
-PASTE_API_URL = "https://api.voc.pet/paste"
+PASTE_API_URL = "https://a.voc.pet/paste"
 
 [triggers]
 crons = [
