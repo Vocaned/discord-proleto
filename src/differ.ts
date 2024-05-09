@@ -44,7 +44,7 @@ export let diff = async (differ: Differ, old: string, pasteapikey: string): Prom
     }
 
     if (output) {
-        let pastereq = await fetch('https://api.voc.pet/paste', {
+        let pastereq = await fetch('https://a.voc.pet/paste', {
             method: 'POST',
             body: JSON.stringify({
                 "key": pasteapikey,
