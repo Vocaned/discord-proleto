@@ -1,4 +1,4 @@
-import { COUNTRIES } from './countries';
+import { SUBDIVISIONS } from './subdivisions';
 
 let random = (seed: number): number => {
     let x = Math.sin(seed) * 10000;
@@ -11,13 +11,13 @@ export let worship = async (date: string, channel: string, token: string): Promi
         date.split('-').map(component => parseInt(component).toString()).join('')
     );
 
-    let country = COUNTRIES[Math.floor(random(seed) * COUNTRIES.length)];
+    let subdivision = SUBDIVISIONS[Math.floor(random(seed) * SUBDIVISIONS.length)];
 
     let req = await fetch(`https://discord.com/api/v10/channels/${channel}`, {
         method: 'PATCH',
         body: JSON.stringify({
-            name: `${country.name}-worshipping`,
-            topic: `:flag_${country.alpha2Code.toLowerCase()}:`.repeat(3)
+            name: `${subdivision.name}-worshipping`,
+            topic: `:flag_${subdivision.parent.toLowerCase()}:`.repeat(3)
         }),
         headers: {
             Authorization: 'Bot ' + token,
