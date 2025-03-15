@@ -12,12 +12,13 @@ export let worship = async (date: string, channel: string, token: string): Promi
     );
 
     let subdivision = SUBDIVISIONS[Math.floor(random(seed) * SUBDIVISIONS.length)];
+    let country = subdivision.parent.toLowerCase().split('-')[0];
 
     let req = await fetch(`https://discord.com/api/v10/channels/${channel}`, {
         method: 'PATCH',
         body: JSON.stringify({
             name: `${subdivision.name}-worshipping`,
-            topic: `:flag_${subdivision.parent.toLowerCase()}:`.repeat(3)
+            topic: `:flag_${country}:`.repeat(3)
         }),
         headers: {
             Authorization: 'Bot ' + token,
