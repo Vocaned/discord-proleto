@@ -11,7 +11,7 @@ export let worship = async (date: string, channel: string, token: string): Promi
         date.split('-').map(component => parseInt(component).toString()).join('')
     );
 
-    let subdivision = SUBDIVISIONS[Math.floor(random(seed) * SUBDIVISIONS.length)];
+    let subdivision = SUBDIVISIONS[Math.trunc(random(seed) * SUBDIVISIONS.length)];
     let country = subdivision.parent.toLowerCase().split('-')[0];
 
     let req = await fetch(`https://discord.com/api/v10/channels/${channel}`, {
