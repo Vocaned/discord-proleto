@@ -8,7 +8,7 @@ const random = (seed: number): number => {
     return x - Math.floor(x);
 }
 
-let comment = '';
+let comments: Array<string> = [];
 
 function processNode(dom: cheerio.CheerioAPI, node: cheerio.Cheerio<AnyNode>, depth: number = 0, stack: Array<number> = [], inList: boolean = false) {
     let output = '';
@@ -18,7 +18,7 @@ function processNode(dom: cheerio.CheerioAPI, node: cheerio.Cheerio<AnyNode>, de
 
         if (dom($el.children().first()).attr("typeof") === 'mw:File') {
             // drop comment parts of the description
-            comment = $el.text();
+            comments.push($el.text())
         } else if (el.type === 'text') {
             output += $el.text();
         } else if (el.tagName === 'ol') {
@@ -54,12 +54,18 @@ interface wikiparse {
     }
 }
 
+type Component = {
+    type: number;
+    components?: Component[];
+    content?: string;
+}
+
 export const words = async (env: Env): Promise<string> => {
     // Get the date in Helsinki as a string in format "Mm D, YYYY"
     let date = new Date().toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Helsinki' });
     let [day, year] = date.split(', ');
 
-    let components: any = [{
+    let components: Component[] = [{
         type: 10, // text
         content: `### Words of the day\n-# ${day} ${year}`
     }];
@@ -72,17 +78,11 @@ export const words = async (env: Env): Promise<string> => {
         let wotdtitle = processNode(wotd, wotd(wotd("#WOTD-rss-title").parentsUntil('tr').last())).trim();
         let wotddesc = processNode(wotd, wotd("#WOTD-rss-description")).trim();
 
-        let wotdcomment = '';
-        if (comment) {
-            wotdcomment = `\n-# - ${comment}`;
-            comment = '';
-        }
-
         components.push({
             type: 14 // separator
         }, {
             type: 10,
-            content: `-# English\n${wotdtitle}\n${wotddesc}${wotdcomment}`
+            content: `-# English\n${wotdtitle}\n${wotddesc}`
         });
     }
 
@@ -95,27 +95,29 @@ export const words = async (env: Env): Promise<string> => {
         let fwotddesc = processNode(fwotd, fwotd("#FWOTD-rss-description")).trim();
         let fwotdlang = fwotd("#FWOTD-rss-language").text().trim();
 
-        let fwotdcomment = '';
-        if (comment) {
-            fwotdcomment = `\n-# - ${comment}`;
-            comment = '';
-        }
         components.push({
             type: 14 // separator
         }, {
             type: 10,
-            content: `-# ${fwotdlang}\n${fwotdtitle}\n${fwotddesc}${fwotdcomment}`
+            content: `-# ${fwotdlang}\n${fwotdtitle}\n${fwotddesc}`
         });
     }
+
+    let finalComponents: Component[] = [{
+        type: 17,
+        components: components
+    }];
+
+    if (comments) finalComponents.unshift({
+        type: 10,
+        content: comments.join('\n\n')
+    });
 
     let req = await fetch(`https://discord.com/api/v10/channels/${env.WORSHIP_CHANNEL_ID}/messages`, {
         method: 'POST',
         body: JSON.stringify({
             flags: 1 << 15, // Components V2
-            components: [{
-                type: 17, // container
-                components: components
-            }]
+            components: finalComponents
         }),
         headers: {
             Authorization: 'Bot ' + env.DISCORD_TOKEN,
