@@ -11,5 +11,8 @@
     "itty-router": "^3.0.12",
     "typescript": "^5.0.4",
     "wrangler": "^3.114.1"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
   }
 }
