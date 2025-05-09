@@ -17,7 +17,7 @@ interface IDStub {
 const SCHEDULE: { [hour: string]: (env: Env) => Promise<string> } = {
     '00': worship,
     //'12': bible
-    '18': words,
+    '15': words,
 }
 
 export default {
