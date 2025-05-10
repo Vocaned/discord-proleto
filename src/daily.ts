@@ -65,6 +65,8 @@ export const words = async (env: Env): Promise<string> => {
     let date = new Date().toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Helsinki' });
     let [day, year] = date.split(', ');
 
+    comments = [];
+
     let components: Component[] = [{
         type: 10, // text
         content: `### Words of the day\n-# ${day} ${year}`
