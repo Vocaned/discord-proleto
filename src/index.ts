@@ -16,15 +16,18 @@ interface IDStub {
 
 const SCHEDULE: { [hour: string]: (env: Env) => Promise<string> } = {
     '00': worship,
-    //'12': bible
+    //'12:00': bible
     '15': words,
 }
 
 export default {
     async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext) {
-        // TODO: Handle retrying the next hour in case of failure (e.g. discord downtime)
         let hour = new Date().toLocaleString('sv-SE', { hour: '2-digit', hour12: false, timeZone: 'Europe/Helsinki' });
-        if (SCHEDULE[hour]) await SCHEDULE[hour](env)
+
+        if (SCHEDULE[hour] && !(await env.DATA.get(`schedule_${hour}`))) {
+            await SCHEDULE[hour](env)
+            await env.DATA.put(`schedule_${hour}`, 'success', { expirationTtl: 7200 });
+        }
 
         let differs = await env.DATA.get<Differ[]>('differs', 'json');
         if (differs) {
