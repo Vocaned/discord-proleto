@@ -110,9 +110,11 @@ export const words = async (env: Env): Promise<string> => {
         components: components
     }];
 
-    if (comments) finalComponents.unshift({
+    let comment = comments.map(c => c.replace('\n', '')).join('\n\n');
+
+    if (comment.trim()) finalComponents.unshift({
         type: 10,
-        content: comments.map(c => c.replace('\n', '')).join('\n\n')
+        content: comment
     });
 
     let req = await fetch(`https://discord.com/api/v10/channels/${env.WORSHIP_CHANNEL_ID}/messages`, {
