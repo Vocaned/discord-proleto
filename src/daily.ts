@@ -30,9 +30,10 @@ function processNode(dom: cheerio.CheerioAPI, node: cheerio.Cheerio<AnyNode>, de
             let d = Math.max(0, depth - 1);
             output += `${'  '.repeat(d)}${number}. ${processNode(dom, el, depth + 1, stack, true).trim()}`;
         } else if (el.tagName === 'a') {
-            const href = $el.attr('href') || '#';
+            let href = $el.attr('href') || '#';
             const text = $el.text().trim();
-            output += inList ? text : `[${text}](https://en.wiktionary.org${href})`;
+            if (!href.startsWith('http')) href = 'https://en.wiktionary.org' + href;
+            output += inList ? text : `[${text}](${href})`;
         } else if (el.tagName === 'i') {
             output += `*${processNode(dom, el, depth, stack, inList).trim()}*`;
         } else if (el.tagName === 'b') {
