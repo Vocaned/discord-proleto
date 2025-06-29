@@ -111,7 +111,7 @@ export const words = async (env: Env): Promise<string> => {
         components: components
     }];
 
-    let comment = comments.map(c => c.replace('\n', '')).join('\n\n');
+    let comment = [...new Set(comments)].map(c => c.replace('\n', '')).join('\n\n');
 
     if (comment.trim()) finalComponents.unshift({
         type: 10,
